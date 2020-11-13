@@ -8,8 +8,8 @@ namespace TestGeneratorConsole
     {
         static void Main(string[] args)
         {
-            string writePath = @"";
-            string path = @"";
+            string writePath = @"result.txt";
+            string path = @"ListGenerator.cs";
             string resultstr = "";
             List<TestInfo> result = new List<TestInfo>();
 
