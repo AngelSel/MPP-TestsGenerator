@@ -17,7 +17,7 @@ namespace TestGeneratorConsole
             _pipelineConfiguration = pipelineConfiguration;
         }
 
-        public async Task Processing(IEnumerable<string> files)
+        public async Task Processing(IEnumerable<string> files, string outputDirectory)
         {
             
 
@@ -33,7 +33,7 @@ namespace TestGeneratorConsole
                 new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = _pipelineConfiguration.MaxProccessingTasks });
 
             var writingBlock = new ActionBlock<TestInfo>(
-                async fI => await File.WriteAllTextAsync(@"TestResult\"+fI.TestName+".txt",fI.TestCode),
+                async fI => await File.WriteAllTextAsync(outputDirectory + fI.TestName+".txt",fI.TestCode),
                 new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = _pipelineConfiguration.MaxWritingTasks });
 
 

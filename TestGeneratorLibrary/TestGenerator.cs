@@ -22,13 +22,6 @@ namespace TestGeneratorLibrary
             foreach (var userClass in treeRoot.DescendantNodes().OfType<ClassDeclarationSyntax>())
             {
 
-                //structure of classFile:
-                //Usings
-                //namespace
-                //className
-                //Setup Method
-                //Test methods for all public methods
-
                 string className = userClass.Identifier.ValueText;
 
                 NamespaceDeclarationSyntax currentNamespace = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName("UnitTests"));
