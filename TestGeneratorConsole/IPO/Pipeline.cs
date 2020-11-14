@@ -2,11 +2,13 @@
 using System.IO;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
+using TestGeneratorLibrary;
 
 namespace TestGeneratorConsole
 {
     public class Pipeline
     {
+        private TestGenerator generator = new TestGenerator();
 
         private readonly PipelineConfiguration _pipelineConfiguration;
 
@@ -17,26 +19,26 @@ namespace TestGeneratorConsole
 
         public async Task Processing(IEnumerable<string> files)
         {
+            
 
             var linkOptions = new DataflowLinkOptions { PropagateCompletion = true };
 
-            var readingBlock = new TransformBlock<string, FileInfo>(
-                async path => new FileInfo(path, await ReadFile(path)),
+            var readingBlock = new TransformBlock<string, string>(
+                async path => await File.ReadAllTextAsync(path),
                 new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = _pipelineConfiguration.MaxReadingTasks });
 
 
-            //Block for processing
-            /*var processingBlock = new TransformBlock<FileInfo, FileInfo>(
-                ,
-                new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = _pipelineConfiguration.MaxProccessingTasks });*/
+            var processingBlock = new TransformManyBlock<string,TestInfo>(
+                async code => await Task.Run(()=> generator.Generate(code)),
+                new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = _pipelineConfiguration.MaxProccessingTasks });
 
-            var writingBlock = new ActionBlock<FileInfo>(
-                async fI => await WriteFile(fI),
+            var writingBlock = new ActionBlock<TestInfo>(
+                async fI => await File.WriteAllTextAsync(@"TestResult\"+fI.TestName+".txt",fI.TestCode),
                 new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = _pipelineConfiguration.MaxWritingTasks });
 
 
-            /*readingBlock.LinkTo(processingBlock, linkOptions);
-            processingBlock.LinkTo(writingBlock, linkOptions);*/
+            readingBlock.LinkTo(processingBlock, linkOptions);
+            processingBlock.LinkTo(writingBlock, linkOptions);
 
             foreach(string file in files)
             {
@@ -49,24 +51,5 @@ namespace TestGeneratorConsole
 
         }
 
-        private async Task<string> ReadFile(string path)
-        {
-            string result;
-            using(var sReader = new StreamReader(path))
-            {
-                result = await sReader.ReadToEndAsync();
-            }
-
-            return result;
-        }
-
-        private async Task WriteFile(FileInfo file)
-        {
-            using(var sWriter = new StreamWriter(file.Path))
-            {
-                await sWriter.WriteAsync(file.Content);
-            }
-
-        }
     }
 }
