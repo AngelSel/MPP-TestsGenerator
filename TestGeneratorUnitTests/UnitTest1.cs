@@ -12,7 +12,7 @@ namespace TestGeneratorUnitTests
     public class UnitTest1
     {
 
-        private TestInfo[] result;
+        private TestClassInfo[] result;
 
         [TestInitialize]
         public void Setup()
@@ -35,7 +35,7 @@ namespace TestGeneratorUnitTests
         [TestMethod]
         public void TestUsings()
         {
-            string[] usingsNames = CSharpSyntaxTree.ParseText(result[0].TestCode).
+            string[] usingsNames = CSharpSyntaxTree.ParseText(result[0].TestClassCode).
                 GetRoot().DescendantNodes().OfType<UsingDirectiveSyntax>().
                 Select(item => item.Name.ToString()).ToArray();
 
@@ -50,7 +50,7 @@ namespace TestGeneratorUnitTests
         [TestMethod]
         public void TestNamespaces()
         {
-            string[] namespaces = CSharpSyntaxTree.ParseText(result[0].TestCode).
+            string[] namespaces = CSharpSyntaxTree.ParseText(result[0].TestClassCode).
                 GetRoot().DescendantNodes().OfType<NamespaceDeclarationSyntax>().
                 Select(item => item.Name.ToString()).ToArray();
 
@@ -61,9 +61,9 @@ namespace TestGeneratorUnitTests
 
 
         [TestMethod]
-        public void TestClassesName()
+        public void TestClassName()
         {
-            string[] classes = CSharpSyntaxTree.ParseText(result[0].TestCode).
+            string[] classes = CSharpSyntaxTree.ParseText(result[0].TestClassCode).
                GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().
                Select(item => item.Identifier.ValueText).ToArray();
 
@@ -74,7 +74,7 @@ namespace TestGeneratorUnitTests
         [TestMethod]
         public void TestMethodsCount()
         {
-            var methods = CSharpSyntaxTree.ParseText(result[0].TestCode).
+            var methods = CSharpSyntaxTree.ParseText(result[0].TestClassCode).
                 GetRoot().DescendantNodes().OfType<MethodDeclarationSyntax>();
 
             Assert.AreEqual(methods.Count(), 2);
@@ -83,7 +83,7 @@ namespace TestGeneratorUnitTests
         [TestMethod]
         public void TestMethodsSignature()
         {
-            var methods = CSharpSyntaxTree.ParseText(result[0].TestCode).
+            var methods = CSharpSyntaxTree.ParseText(result[0].TestClassCode).
                 GetRoot().DescendantNodes().OfType<MethodDeclarationSyntax>();
 
             foreach (MethodDeclarationSyntax method in methods)

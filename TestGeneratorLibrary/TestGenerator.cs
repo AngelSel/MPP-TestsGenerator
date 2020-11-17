@@ -13,9 +13,9 @@ namespace TestGeneratorLibrary
 
         private static AttributeSyntax TestClassAttribute = SyntaxFactory.Attribute(SyntaxFactory.ParseName("TestClass"));
 
-        public TestInfo[] Generate(string content)
+        public TestClassInfo[] Generate(string content)
         {
-            List<TestInfo> generatedTests = new List<TestInfo>();
+            List<TestClassInfo> generatedTests = new List<TestClassInfo>();
 
             SyntaxNode treeRoot = CSharpSyntaxTree.ParseText(content).GetRoot();
 
@@ -24,7 +24,7 @@ namespace TestGeneratorLibrary
 
                 string className = userClass.Identifier.ValueText;
 
-                NamespaceDeclarationSyntax currentNamespace = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName("UnitTests"));
+                NamespaceDeclarationSyntax currentNamespace = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(className+"UnitTests"));
 
                 ClassDeclarationSyntax classSignature = SyntaxFactory.ClassDeclaration($"{className}Test").
                     AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword)).
@@ -43,7 +43,7 @@ namespace TestGeneratorLibrary
                     AddMembers(generatedMethods.ToArray())));
 
 
-                generatedTests.Add(new TestInfo(className, classCode.NormalizeWhitespace().ToFullString()));
+                generatedTests.Add(new TestClassInfo(className, classCode.NormalizeWhitespace().ToFullString()));
             }
 
 

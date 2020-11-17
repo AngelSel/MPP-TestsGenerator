@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace TestGeneratorLibrary
 {
-    public class TestInfo
+    public class TestClassInfo
     {
-        public string TestName { get; set; }
-        public string TestCode { get; set; }
+        public string TestClassName { get; set; }
+        public string TestClassCode { get; set; }
 
-        public TestInfo(string name, string code)
+        public TestClassInfo(string name, string code)
         {
-            TestName = name;
-            TestCode = code;
+            TestClassName = name;
+            TestClassCode = code;
         }
 
     }

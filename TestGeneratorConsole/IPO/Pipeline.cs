@@ -28,12 +28,12 @@ namespace TestGeneratorConsole
                 new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = _pipelineConfiguration.MaxReadingTasks });
 
 
-            var processingBlock = new TransformManyBlock<string,TestInfo>(
+            var processingBlock = new TransformManyBlock<string, TestClassInfo>(
                 async code => await Task.Run(()=> generator.Generate(code)),
                 new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = _pipelineConfiguration.MaxProccessingTasks });
 
-            var writingBlock = new ActionBlock<TestInfo>(
-                async fI => await File.WriteAllTextAsync(outputDirectory + fI.TestName+".txt",fI.TestCode),
+            var writingBlock = new ActionBlock<TestClassInfo>(
+                async fI => await File.WriteAllTextAsync(outputDirectory + fI.TestClassName + ".txt",fI.TestClassCode),
                 new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = _pipelineConfiguration.MaxWritingTasks });
 
 
